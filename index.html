@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <title></title>
+
+    <style>
+        :root {
+            --primary: #0f766e;
+            --secondary: #f59e0b;
+            --tertiary: #14b8a6;
+        }
+        * {
+            box-sizing: border-box;
+        }
+    
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+    
+        body {
+            font-family: "Segoe UI", Arial;
+            background: #f1f5f9;
+            color: #0f172a;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 15px;
+        }
+    
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+    
+        /* HEADER */
+        .title {
+            position: relative;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 22px;
+            color: var(--primary);
+        }
+        .title .logo {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 52px;
+        }
+    
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input,
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #0f172a;
+            font-size: 14px;
+        }
+        input {
+            flex: 1 1 200px;
+        }
+        select {
+            flex: 1 1 150px;
+        }
+    
+        /* CARDS */
+        .card {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 0.5px solid var(--tertiary);
+            border-left: 4px solid var(--tertiary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-left: 4px solid var(--secondary);
+        }
+        .version {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .date {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+        .section h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        ul {
+            padding-left: 18px;
+            margin: 5px 0;
+        }
+        li {
+            margin-bottom: 5px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        code {
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: var(--primary);
+            font-size: 12px;
+        }
+    
+        /* CONTENT + FOOTER */
+        #content {
+            flex: 1;
+        }
+    
+        footer {
+            margin-top: 40px;
+            padding: 12px 0;
+            text-align: left;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #cbd5e1;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            width: 100%;
+        }
+    
+        /* TABLET */
+        @media (min-width: 768px) {
+            .title {
+                font-size: 26px;
+            }
+            .card {
+                padding: 20px;
+            }
+            .version {
+                font-size: 20px;
+            }
+            .section h4 {
+                font-size: 16px;
+            }
+        }
+    
+        /* DESKTOP */
+        @media (min-width: 1024px) {
+            .controls {
+                flex-wrap: nowrap;
+            }
+            input {
+                flex: 2;
+            }
+            select {
+                flex: 1;
+            }
+        }
+    
+        /* MOBILE AJUSTE */
+        @media (max-width: 480px) {
+            .title {
+                font-size: 18px;
+            }
+            .title .logo {
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 class="title">
+            <img src="" class="logo">
+            <span>Histórico de Versões</span>
+        </h1>
+        <div class="controls">
+            <input type="text" id="search" placeholder="Buscar...">
+            <select id="versionFilter">
+                <option value="">Todas versões</option>
+            </select>
+        </div>
+        <div id="content">Carregando...</div>
+        
+        <footer style="
+            margin-top: 40px;
+            padding: 12px 0;
+            text-align: left;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #cbd5e1;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        ">
+            &copy; 2026 — <strong>Version History Viewer</strong>. Desenvolvido por
+            <a href="https://www.linkedin.com/in/josé-renato-da-silva-7485b021a" target="_blank"
+                style="text-decoration:none; color: var(--primary); font-weight: 600;">
+                José Renato da Silva
+            </a>.
+        </footer>
+    </div>
+
+    <script>
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        function getIndentLevel(line) {
+            const match = line.match(/^[\s]*/)[0];
+
+            let spaces = 0;
+
+            for (let char of match) {
+                if (char === "\t") {
+                    spaces += 4;
+                } else {
+                    spaces += 1;
+                }
+            }
+
+            return Math.floor(spaces / 2);
+        }
+
+        function formatText(text) {
+            return escapeHtml(text)
+                .replace(/`(.*?)`/g, '<code>$1</code>');
+        }
+
+        function parseMarkdown(md) {
+            const lines = md.split("\n");
+            const versions = [];
+            let current = null;
+            let currentSection = null;
+            let stack = [];
+
+            lines.forEach(line => {
+
+                if (line.startsWith("## Versão")) {
+                    if (current) versions.push(current);
+
+                    current = {
+                        version: line.replace("## ", "").trim(),
+                        date: "",
+                        sections: []
+                    };
+                }
+
+                else if (line.includes("Data de liberação")) {
+                    current.date = line.replace("**Data de liberação:**", "").trim();
+                }
+
+                else if (line.startsWith("###")) {
+                    currentSection = {
+                        title: line.replace("###", "").trim(),
+                        items: []
+                    };
+                    current.sections.push(currentSection);
+
+                    stack = [];
+                }
+
+                else if (line.trim().startsWith("-")) {
+
+                    const level = getIndentLevel(line);
+                    const text = line.trim().replace("-", "").trim();
+
+                    const newItem = {
+                        text: text,
+                        sub: []
+                    };
+
+                    if (!currentSection) return;
+
+                    if (level === 0) {
+                        currentSection.items.push(newItem);
+                        stack = [newItem];
+                    } else {
+                        stack = stack.slice(0, level);
+
+                        const parent = stack[stack.length - 1];
+
+                        if (parent) {
+                            parent.sub.push(newItem);
+                        } else {
+                            currentSection.items.push(newItem);
+                        }
+
+                        stack.push(newItem);
+                    }
+                }
+
+            });
+
+            if (current) versions.push(current);
+
+            return versions;
+        }
+
+        function renderItems(items) {
+            return `
+                <ul>
+                    ${items.map(i => `
+                        <li>
+                            ${formatText(i.text)}
+                            ${i.sub.length ? renderItems(i.sub) : ""}
+                        </li>
+                    `).join("")}
+                </ul>
+            `;
+        }
+
+        function render(versions) {
+            const container = document.getElementById("content");
+            container.innerHTML = "";
+
+            versions.forEach(v => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                let html = `
+                    <div class="version">${formatText(v.version)}</div>
+                    <div class="date">${formatText(v.date)}</div>
+                `;
+
+                v.sections.forEach(s => {
+                    html += `
+                        <div class="section">
+                            <h4>${formatText(s.title)}</h4>
+                            ${renderItems(s.items)}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+        }
+
+        function populateFilter(versions) {
+            const select = document.getElementById("versionFilter");
+            select.innerHTML = '<option value="">Todas versões</option>';
+
+            versions.forEach(v => {
+                const opt = document.createElement("option");
+                opt.value = v.version;
+                opt.textContent = v.version;
+                select.appendChild(opt);
+            });
+        }
+
+        function applyFilters(allVersions) {
+            const search = document.getElementById("search").value.toLowerCase();
+            const version = document.getElementById("versionFilter").value;
+
+            let filtered = allVersions;
+
+            if (version) {
+                filtered = filtered.filter(v => v.version === version);
+            }
+
+            if (search) {
+                filtered = filtered.filter(v =>
+                    JSON.stringify(v).toLowerCase().includes(search)
+                );
+            }
+
+            render(filtered);
+        }
+
+        function applyConfig(config) {
+            document.title = config.appName;
+            document.querySelector(".title span").textContent = config.appName;
+
+            const logo = document.querySelector(".logo");
+            if (config.logo) {
+                logo.src = config.logo;
+            } else {
+                logo.style.display = "none";
+            }
+
+            document.documentElement.style.setProperty('--primary', config.primaryColor);
+            document.documentElement.style.setProperty('--secondary', config.secondaryColor);
+            document.documentElement.style.setProperty('--tertiary', config.tertiaryColor);
+        }
+
+        fetch('config.json')
+            .then(res => res.json())
+            .then(config => {
+                applyConfig(config);
+
+                return fetch(config.dataFile);
+            })
+            .then(res => res.text())
+            .then(md => {
+                const versions = parseMarkdown(md);
+
+                populateFilter(versions);
+                render(versions);
+
+                document.getElementById("search")
+                    .addEventListener("input", () => applyFilters(versions));
+
+                document.getElementById("versionFilter")
+                    .addEventListener("change", () => applyFilters(versions));
+            });
+    </script>
+
+</body>
+
+</html>

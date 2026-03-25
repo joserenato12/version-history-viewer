@@ -1,0 +1,8 @@
+{
+  "appName": "Version History Viewer",
+  "primaryColor": "#005B96",
+  "secondaryColor": "#707A8A",
+  "tertiaryColor": "#00AEEF",
+  "logo": "logo.png",
+  "dataFile": "Historico.txt"
+}

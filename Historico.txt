@@ -1,0 +1,50 @@
+﻿## Versão 2.1.0
+**Data de liberação:** 20/03/2026
+
+### Melhorias
+- Novo sistema de configuração dinâmica via `config.json`
+  - Permite alterar nome do sistema, cores e logo
+  - Suporte a múltiplos ambientes (produção e portfólio)
+- Otimização no carregamento de arquivos
+  - Redução de tempo no `fetch`
+  - Melhor tratamento de erros de rede
+
+### Correções
+- Correção na renderização de subitens aninhados
+- Ajuste no filtro de busca ignorando maiúsculas/minúsculas
+
+## Versão 2.0.0
+**Data de liberação:** 15/03/2026
+
+### Melhorias
+- Implementação de parser para formato markdown customizado
+  - Suporte a listas com múltiplos níveis
+  - Identificação automática de seções
+- Interface redesenhada
+  - Layout em cards
+  - Melhor espaçamento e leitura
+
+### Correções
+- Correção de bug ao processar linhas vazias
+- Ajuste na exibição de datas
+
+## Versão 1.5.0
+**Data de liberação:** 10/03/2026
+
+### Melhorias
+- Adicionado filtro por versão
+- Adicionada busca textual em todo o histórico
+- Destaque visual para títulos de seção
+
+### Correções
+- Correção no alinhamento em dispositivos móveis
+- Ajuste no espaçamento entre itens
+
+## Versão 1.0.0
+**Data de liberação:** 01/03/2026
+
+### Inicial
+- Primeira versão do sistema
+  - Leitura de arquivo `.txt`
+  - Renderização básica em HTML
+  - Estrutura inicial de parsing
